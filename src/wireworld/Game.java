@@ -8,13 +8,13 @@ enum GameCell {
     EMPTY, EHEAD, ETAIL, CONDUCTOR;
 }
 
-public class WireGame {
+public class Game {
 
     private final int width;
     private final int height;
     private GameCell[][] board;
 
-    public WireGame(int width, int height) {
+    public Game(int width, int height) {
         this.width = width;
         this.height = height;
         board = new GameCell[height][width];
