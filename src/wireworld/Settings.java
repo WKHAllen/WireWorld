@@ -11,22 +11,20 @@ import java.util.Properties;
  *
  * @author Will Allen
  */
-public class GameProperties {
+public class Settings {
 
     private final String filename;
     private String comment;
     private final Properties prop;
 
-    public GameProperties(String filename) throws IOException {
-        this.filename = filename;
-        this.comment = null;
-        this.prop = GameProperties.readPropertiesFile(filename);
+    public Settings(String filename) throws IOException {
+        this(filename, null);
     }
     
-    public GameProperties(String filename, String comment) throws IOException {
+    public Settings(String filename, String comment) throws IOException {
         this.filename = filename;
         this.comment = comment;
-        this.prop = GameProperties.readPropertiesFile(filename);
+        this.prop = Settings.readPropertiesFile(filename);
     }
 
     private static Properties readPropertiesFile(String filename) throws IOException {

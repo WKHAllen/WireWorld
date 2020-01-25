@@ -16,22 +16,23 @@ public class WireWorld extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        GameProperties settings = null;
+        // get settings
+        Settings settings = null;
         try {
-            settings = new GameProperties("game.properties", "WireWorld game settings");
+            settings = new Settings("game.properties", "WireWorld game settings");
         } catch (IOException e) {
             e.printStackTrace();
         }
         
-        try {
-            settings.set("width", "800");
-            settings.set("height", "600");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // initialize the game
+        int width = Integer.parseInt(settings.get("width"));
+        int height = Integer.parseInt(settings.get("height"));
+        Game game = new Game(width, height);
         
-        System.out.println(settings.get("width"));
-        System.out.println(settings.get("height"));
+        // initialize the display
+        int cellSize = Integer.parseInt(settings.get("cellSize"));
+        int padding = Integer.parseInt(settings.get("padding"));
+        Display display = new Display(game, cellSize, padding);
         
         StackPane root = new StackPane();
         
@@ -39,11 +40,17 @@ public class WireWorld extends Application {
         cir.setFill(Color.INDIGO);
         root.getChildren().add(cir);
         
-        Scene scene = new Scene(root, 400, 400);
+        Scene scene = new Scene(root, display.getWidth(), display.getHeight());
         
         primaryStage.setTitle("WireWorld");
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+        gameLoop(root, game, display, settings);
+    }
+    
+    private static void gameLoop(StackPane root, Game game, Display display, Settings settings) {
+        
     }
 
     /**
