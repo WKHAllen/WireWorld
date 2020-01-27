@@ -2,8 +2,10 @@ package wireworld;
 
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -57,6 +59,17 @@ public class WireWorld extends Application {
         Thread thread = new Thread(gameloop);
         thread.setDaemon(true);
         thread.start();
+
+        scene.setOnKeyTyped(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCharacter()) {
+                    case " ":
+                        ((GameLoop) gameloop).togglePause();
+                        break;
+                }
+            }
+        });
     }
 
     /**
