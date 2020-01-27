@@ -1,7 +1,6 @@
 package wireworld;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
@@ -37,9 +36,8 @@ public class WireWorld extends Application {
         // initialize the display
         int cellSize = Integer.parseInt(settings.get("cellSize"));
         int padding = Integer.parseInt(settings.get("padding"));
-        Display display = new Display(game, cellSize, padding);
-
         StackPane root = new StackPane();
+        Display display = new Display(root, game, cellSize, padding);
 
         Circle cir = new Circle(200, 200, 100);
         cir.setFill(Color.INDIGO);
@@ -51,11 +49,10 @@ public class WireWorld extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        gameLoop(root, game, display, settings);
-    }
-
-    private static void gameLoop(StackPane root, Game game, Display display, Settings settings) {
-        
+        Runnable gameloop = new GameLoop(game, display, settings);
+        Thread thread = new Thread(gameloop);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     /**
