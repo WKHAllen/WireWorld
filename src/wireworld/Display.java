@@ -1,6 +1,6 @@
 package wireworld;
 
-import javafx.scene.layout.StackPane;
+import javafx.scene.Group;
 
 /**
  *
@@ -12,14 +12,14 @@ public class Display {
     private final int height;
     private final int cellSize;
     private final int padding;
-    private final StackPane root;
+    private final Group root;
     private final Game game;
 
-    public Display(StackPane root, Game game, int cellSize) {
+    public Display(Group root, Game game, int cellSize) {
         this(root, game, cellSize, 1);
     }
 
-    public Display(StackPane root, Game game, int cellSize, int padding) {
+    public Display(Group root, Game game, int cellSize, int padding) {
         this.width = game.getWidth() * (cellSize + padding) + padding;
         this.height = game.getHeight() * (cellSize + padding) + padding;
         this.cellSize = cellSize;
@@ -48,7 +48,7 @@ public class Display {
         return this.game;
     }
 
-    public StackPane getRoot() {
+    public Group getRoot() {
         return this.root;
     }
 

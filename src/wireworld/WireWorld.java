@@ -2,8 +2,8 @@ package wireworld;
 
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -36,12 +36,16 @@ public class WireWorld extends Application {
         // initialize the display
         int cellSize = Integer.parseInt(settings.get("cellSize"));
         int padding = Integer.parseInt(settings.get("padding"));
-        StackPane root = new StackPane();
+        Group root = new Group();
         Display display = new Display(root, game, cellSize, padding);
 
-        Circle cir = new Circle(200, 200, 100);
+        Circle cir = new Circle(0, 0, 100);
         cir.setFill(Color.INDIGO);
         root.getChildren().add(cir);
+
+        Circle cir2 = new Circle(200, 200, 80);
+        cir2.setFill(Color.LIGHTGREEN);
+        root.getChildren().add(cir2);
 
         Scene scene = new Scene(root, display.getWidth(), display.getHeight());
 
