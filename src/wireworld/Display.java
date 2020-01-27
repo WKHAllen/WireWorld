@@ -43,7 +43,7 @@ public class Display {
     public Game getGame() {
         return this.game;
     }
-    
+
     public void display() {
         // TODO: display the game
     }

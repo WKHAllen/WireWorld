@@ -20,7 +20,7 @@ public class Settings {
     public Settings(String filename) throws IOException {
         this(filename, null);
     }
-    
+
     public Settings(String filename, String comment) throws IOException {
         this.filename = filename;
         this.comment = comment;
@@ -49,11 +49,11 @@ public class Settings {
     public Properties getProp() {
         return this.prop;
     }
-    
+
     public String getComment() {
         return this.comment;
     }
-    
+
     public void setComment(String comment) {
         this.comment = comment;
     }
@@ -72,6 +72,12 @@ public class Settings {
         }
         this.prop.store(fos, this.comment);
         fos.close();
+    }
+
+    public void setDefault(String key, String value) throws IOException {
+        if (this.prop.getProperty(key) == null) {
+            this.set(key, value);
+        }
     }
 
 }
