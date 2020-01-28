@@ -33,6 +33,14 @@ public class Game {
         return this.height;
     }
 
+    public GameCell get(int x, int y) {
+        return this.board[y][x];
+    }
+
+    public void set(int x, int y, GameCell cell) {
+        this.board[y][x] = cell;
+    }
+
     private int numEHeadNeighbors(int x, int y) {
         int total = 0;
         for (int i = x - 1; i <= x + 1; i++) {

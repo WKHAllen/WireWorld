@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -59,6 +60,40 @@ public class WireWorld extends Application {
         Thread thread = new Thread(gameloop);
         thread.setDaemon(true);
         thread.start();
+
+        int[] mousePos = {-1, -1};
+
+        scene.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (display.onScreen((int) event.getSceneX(), (int) event.getSceneY())) {
+                    int[] newMousePos = display.coordsToPos((int) event.getSceneX(), (int) event.getSceneY());
+                    if (mousePos[0] != newMousePos[0] || mousePos[1] != newMousePos[1]) {
+                        mousePos[0] = newMousePos[0];
+                        mousePos[1] = newMousePos[1];
+                        if (event.isPrimaryButtonDown()) {
+                            switch (game.get(newMousePos[0], newMousePos[1])) {
+                                case EMPTY:
+                                    game.set(newMousePos[0], newMousePos[1], GameCell.CONDUCTOR);
+                                    break;
+                                case CONDUCTOR:
+                                    game.set(newMousePos[0], newMousePos[1], GameCell.EMPTY);
+                                    break;
+                            }
+                        } else if (event.isSecondaryButtonDown()) {
+                            switch (game.get(newMousePos[0], newMousePos[1])) {
+                                case EMPTY:
+                                    game.set(newMousePos[0], newMousePos[1], GameCell.EHEAD);
+                                    break;
+                                case EHEAD:
+                                    game.set(newMousePos[0], newMousePos[1], GameCell.EMPTY);
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         scene.setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override

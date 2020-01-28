@@ -52,6 +52,20 @@ public class Display {
         return this.root;
     }
 
+    public boolean onScreen(int x, int y) {
+        return x >= 0 && x < this.width - 1 && y >= 0 && y < this.height - 1;
+    }
+
+    public int[] coordsToPos(int x, int y) {
+        int[] pos = {x / (this.cellSize + this.padding), y / (this.cellSize + this.padding)};
+        return pos;
+    }
+
+    public int[] posToCoords(int x, int y) {
+        int[] coords = {x * (this.cellSize + this.padding), y * (this.cellSize + this.padding)};
+        return coords;
+    }
+
     public void display() {
         // TODO: display the game
     }
