@@ -3,13 +3,10 @@ package wireworld;
 import java.io.IOException;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -47,14 +44,6 @@ public class WireWorld extends Application {
         Group root = new Group();
         Display display = new Display(root, game, cellSize, padding);
 
-        Circle cir = new Circle(0, 0, 100);
-        cir.setFill(Color.INDIGO);
-        root.getChildren().add(cir);
-
-        Circle cir2 = new Circle(200, 200, 80);
-        cir2.setFill(Color.LIGHTGREEN);
-        root.getChildren().add(cir2);
-
         Scene scene = new Scene(root, display.getWidth(), display.getHeight());
 
         primaryStage.setTitle("WireWorld");
@@ -75,98 +64,86 @@ public class WireWorld extends Application {
 
         gameloop.start();
         
-        scene.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                mousePos = display.coordsToPos((int) event.getSceneX(), (int) event.getSceneY());
-                if (event.isPrimaryButtonDown()) {
-                    switch (game.get(mousePos[0], mousePos[1])) {
-                        case EMPTY:
-                        case EHEAD:
-                        case ETAIL:
-                            game.set(mousePos[0], mousePos[1], GameCell.CONDUCTOR);
-                            break;
-                        case CONDUCTOR:
-                            game.set(mousePos[0], mousePos[1], GameCell.EMPTY);
-                            break;
-                    }
-                } else if (event.isSecondaryButtonDown()) {
-                    switch (game.get(mousePos[0], mousePos[1])) {
-                        case EMPTY:
-                        case CONDUCTOR:
-                            game.set(mousePos[0], mousePos[1], GameCell.EHEAD);
-                            break;
-                        case EHEAD:
-                        case ETAIL:
-                            game.set(mousePos[0], mousePos[1], GameCell.CONDUCTOR);
-                            break;
-                    }
+        scene.setOnMousePressed((MouseEvent event) -> {
+            mousePos = display.coordsToPos((int) event.getSceneX(), (int) event.getSceneY());
+            if (event.isPrimaryButtonDown()) {
+                switch (game.get(mousePos[0], mousePos[1])) {
+                    case EMPTY:
+                    case EHEAD:
+                    case ETAIL:
+                        game.set(mousePos[0], mousePos[1], GameCell.CONDUCTOR);
+                        break;
+                    case CONDUCTOR:
+                        game.set(mousePos[0], mousePos[1], GameCell.EMPTY);
+                        break;
+                }
+            } else if (event.isSecondaryButtonDown()) {
+                switch (game.get(mousePos[0], mousePos[1])) {
+                    case EMPTY:
+                    case CONDUCTOR:
+                        game.set(mousePos[0], mousePos[1], GameCell.EHEAD);
+                        break;
+                    case EHEAD:
+                    case ETAIL:
+                        game.set(mousePos[0], mousePos[1], GameCell.CONDUCTOR);
+                        break;
                 }
             }
         });
 
-        scene.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (display.onScreen((int) event.getSceneX(), (int) event.getSceneY())) {
-                    int[] newMousePos = display.coordsToPos((int) event.getSceneX(), (int) event.getSceneY());
-                    if (mousePos[0] != newMousePos[0] || mousePos[1] != newMousePos[1]) {
-                        mousePos[0] = newMousePos[0];
-                        mousePos[1] = newMousePos[1];
-                        if (event.isPrimaryButtonDown()) {
-                            switch (game.get(newMousePos[0], newMousePos[1])) {
-                                case EMPTY:
-                                case EHEAD:
-                                case ETAIL:
-                                    game.set(newMousePos[0], newMousePos[1], GameCell.CONDUCTOR);
-                                    break;
-                                case CONDUCTOR:
-                                    game.set(newMousePos[0], newMousePos[1], GameCell.EMPTY);
-                                    break;
-                            }
-                        } else if (event.isSecondaryButtonDown()) {
-                            switch (game.get(newMousePos[0], newMousePos[1])) {
-                                case EMPTY:
-                                case CONDUCTOR:
-                                    game.set(newMousePos[0], newMousePos[1], GameCell.EHEAD);
-                                    break;
-                                case EHEAD:
-                                case ETAIL:
-                                    game.set(newMousePos[0], newMousePos[1], GameCell.CONDUCTOR);
-                                    break;
-                            }
+        scene.setOnMouseDragged((MouseEvent event) -> {
+            if (display.onScreen((int) event.getSceneX(), (int) event.getSceneY())) {
+                int[] newMousePos = display.coordsToPos((int) event.getSceneX(), (int) event.getSceneY());
+                if (mousePos[0] != newMousePos[0] || mousePos[1] != newMousePos[1]) {
+                    mousePos[0] = newMousePos[0];
+                    mousePos[1] = newMousePos[1];
+                    if (event.isPrimaryButtonDown()) {
+                        switch (game.get(newMousePos[0], newMousePos[1])) {
+                            case EMPTY:
+                            case EHEAD:
+                            case ETAIL:
+                                game.set(newMousePos[0], newMousePos[1], GameCell.CONDUCTOR);
+                                break;
+                            case CONDUCTOR:
+                                game.set(newMousePos[0], newMousePos[1], GameCell.EMPTY);
+                                break;
+                        }
+                    } else if (event.isSecondaryButtonDown()) {
+                        switch (game.get(newMousePos[0], newMousePos[1])) {
+                            case EMPTY:
+                            case CONDUCTOR:
+                                game.set(newMousePos[0], newMousePos[1], GameCell.EHEAD);
+                                break;
+                            case EHEAD:
+                            case ETAIL:
+                                game.set(newMousePos[0], newMousePos[1], GameCell.CONDUCTOR);
+                                break;
                         }
                     }
                 }
             }
         });
 
-        scene.setOnKeyTyped(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCharacter()) {
-                    case " ":
-                        if (running) {
-                            running = false;
-                        } else {
-                            running = true;
-                        }
-                        break;
-                    case "\n":
-                    case "\r":
-                        game.step();
-                        display.display();
-                        break;
-                }
+        scene.setOnKeyTyped((KeyEvent event) -> {
+            switch (event.getCharacter()) {
+                case " ":
+                    if (running) {
+                        running = false;
+                    } else {
+                        running = true;
+                    }
+                    break;
+                case "\n":
+                case "\r":
+                    game.step();
+                    display.display();
+                    break;
             }
         });
 
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                gameloop.stop();
-                running = false;
-            }
+        primaryStage.setOnCloseRequest((WindowEvent event) -> {
+            gameloop.stop();
+            running = false;
         });
     }
 
