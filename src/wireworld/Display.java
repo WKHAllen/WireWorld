@@ -17,11 +17,11 @@ public class Display {
     private final Group root;
     private final Game game;
 
-    private static final Color border = Color.WHITE;
-    private static final Color empty = Color.BLACK;
-    private static final Color conductor = Color.YELLOW;
-    private static final Color ehead = Color.BLUE;
-    private static final Color etail = Color.RED;
+    private static final Color BORDER = Color.GRAY;
+    private static final Color EMPTY = Color.BLACK;
+    private static final Color CONDUCTOR = Color.YELLOW;
+    private static final Color EHEAD = Color.BLUE;
+    private static final Color ETAIL = Color.RED;
 
     public Display(Group root, Game game, int cellSize) {
         this(root, game, cellSize, 1);
@@ -34,7 +34,6 @@ public class Display {
         this.padding = padding;
         this.root = root;
         this.game = game;
-        this.fill(this.border);
     }
 
     public int getWidth() {
@@ -83,22 +82,22 @@ public class Display {
 
     public void display() {
         this.root.getChildren().clear();
-        this.fill(this.border);
+        this.fill(Display.BORDER);
         for (int i = 0; i < this.game.getHeight(); i++) {
             for (int j = 0; j < this.game.getWidth(); j++) {
                 Rectangle rect = new Rectangle(this.padding + j * (this.cellSize + this.padding), this.padding + i * (this.cellSize + this.padding), this.cellSize, this.cellSize);
                 switch (this.game.get(j, i)) {
                     case EMPTY:
-                        rect.setFill(this.empty);
+                        rect.setFill(Display.EMPTY);
                         break;
                     case CONDUCTOR:
-                        rect.setFill(this.conductor);
+                        rect.setFill(Display.CONDUCTOR);
                         break;
                     case EHEAD:
-                        rect.setFill(this.ehead);
+                        rect.setFill(Display.EHEAD);
                         break;
                     case ETAIL:
-                        rect.setFill(this.etail);
+                        rect.setFill(Display.ETAIL);
                         break;
                 }
                 this.root.getChildren().add(rect);

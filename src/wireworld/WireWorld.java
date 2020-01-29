@@ -63,7 +63,7 @@ public class WireWorld extends Application {
         };
 
         gameloop.start();
-        
+
         scene.setOnMousePressed((MouseEvent event) -> {
             mousePos = display.coordsToPos((int) event.getSceneX(), (int) event.getSceneY());
             if (event.isPrimaryButtonDown()) {
@@ -127,11 +127,7 @@ public class WireWorld extends Application {
         scene.setOnKeyTyped((KeyEvent event) -> {
             switch (event.getCharacter()) {
                 case " ":
-                    if (running) {
-                        running = false;
-                    } else {
-                        running = true;
-                    }
+                    running = !running;
                     break;
                 case "\n":
                 case "\r":
