@@ -41,6 +41,14 @@ public class Game {
         this.board[y][x] = cell;
     }
 
+    public void clear() {
+        for (int i = 0; i < this.height; i++) {
+            for (int j = 0; j < this.width; j++) {
+                this.board[i][j] = GameCell.EMPTY;
+            }
+        }
+    }
+
     private int numEHeadNeighbors(int x, int y) {
         int total = 0;
         for (int i = x - 1; i <= x + 1; i++) {

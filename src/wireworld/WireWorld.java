@@ -134,6 +134,9 @@ public class WireWorld extends Application {
                     game.step();
                     display.display();
                     break;
+                case "\b":
+                    game.clear();
+                    break;
             }
         });
 
