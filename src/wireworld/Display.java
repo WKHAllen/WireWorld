@@ -82,7 +82,28 @@ public class Display {
     }
 
     public void display() {
+        this.root.getChildren().clear();
         this.fill(this.border);
+        for (int i = 0; i < this.game.getHeight(); i++) {
+            for (int j = 0; j < this.game.getWidth(); j++) {
+                Rectangle rect = new Rectangle(this.padding + j * (this.cellSize + this.padding), this.padding + i * (this.cellSize + this.padding), this.cellSize, this.cellSize);
+                switch (this.game.get(j, i)) {
+                    case EMPTY:
+                        rect.setFill(this.empty);
+                        break;
+                    case CONDUCTOR:
+                        rect.setFill(this.conductor);
+                        break;
+                    case EHEAD:
+                        rect.setFill(this.ehead);
+                        break;
+                    case ETAIL:
+                        rect.setFill(this.etail);
+                        break;
+                }
+                this.root.getChildren().add(rect);
+            }
+        }
     }
 
 }

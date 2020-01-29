@@ -29,7 +29,7 @@ public class WireWorld extends Application {
             settings = new Settings("game.properties", "WireWorld game settings");
             settings.setDefault("width", "40");
             settings.setDefault("height", "30");
-            settings.setDefault("cellSize", "10");
+            settings.setDefault("cellSize", "20");
             settings.setDefault("padding", "1");
         } catch (IOException e) {
             e.printStackTrace();
