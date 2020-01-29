@@ -29,6 +29,7 @@ public class WireWorld extends Application {
             settings.setDefault("height", "30");
             settings.setDefault("cellSize", "20");
             settings.setDefault("padding", "1");
+            settings.setDefault("speed", "20");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,10 +52,22 @@ public class WireWorld extends Application {
         primaryStage.show();
 
         this.running = true;
+        double frameTime = 1000000000 / ((double) Integer.parseInt(settings.get("speed")));
 
         AnimationTimer gameloop = new AnimationTimer() {
+
+            private long lastFrame = 0;
+
             @Override
             public void handle(long now) {
+                if (now - this.lastFrame < frameTime) {
+                    try {
+                        Thread.sleep((long) ((frameTime - (now - this.lastFrame)) / 1000000));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                this.lastFrame = now;
                 display.display();
                 if (running) {
                     game.step();
