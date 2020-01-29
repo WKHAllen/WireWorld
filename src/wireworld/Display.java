@@ -1,6 +1,8 @@
 package wireworld;
 
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  *
@@ -15,6 +17,12 @@ public class Display {
     private final Group root;
     private final Game game;
 
+    private static final Color border = Color.WHITE;
+    private static final Color empty = Color.BLACK;
+    private static final Color conductor = Color.YELLOW;
+    private static final Color ehead = Color.BLUE;
+    private static final Color etail = Color.RED;
+
     public Display(Group root, Game game, int cellSize) {
         this(root, game, cellSize, 1);
     }
@@ -26,6 +34,7 @@ public class Display {
         this.padding = padding;
         this.root = root;
         this.game = game;
+        this.fill(this.border);
     }
 
     public int getWidth() {
@@ -66,8 +75,14 @@ public class Display {
         return coords;
     }
 
+    public void fill(Color color) {
+        Rectangle rect = new Rectangle(0, 0, this.width, this.height);
+        rect.setFill(color);
+        root.getChildren().add(rect);
+    }
+
     public void display() {
-        // TODO: display the game
+        this.fill(this.border);
     }
 
 }

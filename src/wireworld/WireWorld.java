@@ -1,6 +1,7 @@
 package wireworld;
 
 import java.io.IOException;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -10,12 +11,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
  * @author Will Allen
  */
 public class WireWorld extends Application {
+
+    private boolean running = false;
 
     @Override
     public void start(Stage primaryStage) {
@@ -56,10 +60,17 @@ public class WireWorld extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        Runnable gameloop = new GameLoop(game, display, settings);
-        Thread thread = new Thread(gameloop);
-        thread.setDaemon(true);
-        thread.start();
+        this.running = true;
+
+        AnimationTimer gameloop = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                display.display();
+                game.step();
+            }
+        };
+
+        gameloop.start();
 
         int[] mousePos = {-1, -1};
 
@@ -100,9 +111,23 @@ public class WireWorld extends Application {
             public void handle(KeyEvent event) {
                 switch (event.getCharacter()) {
                     case " ":
-                        ((GameLoop) gameloop).togglePause();
+                        if (running) {
+                            gameloop.stop();
+                            running = false;
+                        } else {
+                            gameloop.start();
+                            running = true;
+                        }
                         break;
                 }
+            }
+        });
+
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                gameloop.stop();
+                running = false;
             }
         });
     }
