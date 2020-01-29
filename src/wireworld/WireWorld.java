@@ -20,6 +20,7 @@ import javafx.stage.WindowEvent;
 public class WireWorld extends Application {
 
     private boolean running = false;
+    private int[] mousePos = {-1, -1};
 
     @Override
     public void start(Stage primaryStage) {
@@ -66,13 +67,43 @@ public class WireWorld extends Application {
             @Override
             public void handle(long now) {
                 display.display();
-                game.step();
+                if (running) {
+                    game.step();
+                }
             }
         };
 
         gameloop.start();
-
-        int[] mousePos = {-1, -1};
+        
+        scene.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                mousePos = display.coordsToPos((int) event.getSceneX(), (int) event.getSceneY());
+                if (event.isPrimaryButtonDown()) {
+                    switch (game.get(mousePos[0], mousePos[1])) {
+                        case EMPTY:
+                        case EHEAD:
+                        case ETAIL:
+                            game.set(mousePos[0], mousePos[1], GameCell.CONDUCTOR);
+                            break;
+                        case CONDUCTOR:
+                            game.set(mousePos[0], mousePos[1], GameCell.EMPTY);
+                            break;
+                    }
+                } else if (event.isSecondaryButtonDown()) {
+                    switch (game.get(mousePos[0], mousePos[1])) {
+                        case EMPTY:
+                        case CONDUCTOR:
+                            game.set(mousePos[0], mousePos[1], GameCell.EHEAD);
+                            break;
+                        case EHEAD:
+                        case ETAIL:
+                            game.set(mousePos[0], mousePos[1], GameCell.CONDUCTOR);
+                            break;
+                    }
+                }
+            }
+        });
 
         scene.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
@@ -85,6 +116,8 @@ public class WireWorld extends Application {
                         if (event.isPrimaryButtonDown()) {
                             switch (game.get(newMousePos[0], newMousePos[1])) {
                                 case EMPTY:
+                                case EHEAD:
+                                case ETAIL:
                                     game.set(newMousePos[0], newMousePos[1], GameCell.CONDUCTOR);
                                     break;
                                 case CONDUCTOR:
@@ -94,10 +127,12 @@ public class WireWorld extends Application {
                         } else if (event.isSecondaryButtonDown()) {
                             switch (game.get(newMousePos[0], newMousePos[1])) {
                                 case EMPTY:
+                                case CONDUCTOR:
                                     game.set(newMousePos[0], newMousePos[1], GameCell.EHEAD);
                                     break;
                                 case EHEAD:
-                                    game.set(newMousePos[0], newMousePos[1], GameCell.EMPTY);
+                                case ETAIL:
+                                    game.set(newMousePos[0], newMousePos[1], GameCell.CONDUCTOR);
                                     break;
                             }
                         }
@@ -112,12 +147,15 @@ public class WireWorld extends Application {
                 switch (event.getCharacter()) {
                     case " ":
                         if (running) {
-                            gameloop.stop();
                             running = false;
                         } else {
-                            gameloop.start();
                             running = true;
                         }
+                        break;
+                    case "\n":
+                    case "\r":
+                        game.step();
+                        display.display();
                         break;
                 }
             }
