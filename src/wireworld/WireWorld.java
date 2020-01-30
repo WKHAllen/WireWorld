@@ -5,7 +5,6 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -17,14 +16,17 @@ import javafx.stage.WindowEvent;
  */
 public class WireWorld extends Application {
 
+    private Stage stage;
     private boolean running = false;
     private int speed;
     private int[] mousePos = {-1, -1};
 
     @Override
     public void start(Stage primaryStage) {
+        this.stage = primaryStage;
+
         // get settings
-        Settings settings = null;
+        final Settings settings;
         try {
             settings = new Settings("game.properties", "WireWorld game settings");
             settings.setDefault("width", "40");
@@ -33,13 +35,16 @@ public class WireWorld extends Application {
             settings.setDefault("padding", "1");
             settings.setDefault("speed", "20");
         } catch (IOException e) {
+            System.out.println("Failed to read game properties");
             e.printStackTrace();
+            this.stage.close();
+            return;
         }
 
         // initialize the game
         int width = Integer.parseInt(settings.get("width"));
         int height = Integer.parseInt(settings.get("height"));
-        Game game = new Game(width, height);
+        final Game game = new Game(width, height);
 
         // initialize the display
         int cellSize = Integer.parseInt(settings.get("cellSize"));
@@ -66,6 +71,7 @@ public class WireWorld extends Application {
                     try {
                         Thread.sleep((long) ((1000000000 / ((double) speed) - (now - this.lastFrame)) / 1000000));
                     } catch (InterruptedException e) {
+                        System.out.println("Failed to sleep in gameloop");
                         e.printStackTrace();
                     }
                 }
@@ -167,8 +173,32 @@ public class WireWorld extends Application {
 
         primaryStage.setOnCloseRequest((WindowEvent event) -> {
             gameloop.stop();
+            saveGame(game, settings, -1);
             running = false;
         });
+    }
+
+    public void saveGame(Game game, Settings settings, int saveId) {
+        String filename;
+        String ext = ".wws";
+        if (saveId == -1) {
+            filename = "current" + ext;
+        } else {
+            filename = "game-" + Integer.toString(saveId) + ext;
+        }
+
+        try {
+            Save.save(filename, game, settings);
+        } catch (IOException e) {
+            System.out.println("Failed to save game");
+            e.printStackTrace();
+        }
+    }
+
+    public void loadGame(Game game) {
+        // TODO: implement this
+        this.stage.close();
+        launch(new String[]{});
     }
 
     /**
