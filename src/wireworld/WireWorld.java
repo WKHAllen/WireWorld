@@ -5,6 +5,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -17,6 +18,7 @@ import javafx.stage.WindowEvent;
 public class WireWorld extends Application {
 
     private boolean running = false;
+    private int speed;
     private int[] mousePos = {-1, -1};
 
     @Override
@@ -52,7 +54,7 @@ public class WireWorld extends Application {
         primaryStage.show();
 
         this.running = true;
-        double frameTime = 1000000000 / ((double) Integer.parseInt(settings.get("speed")));
+        this.speed = Integer.parseInt(settings.get("speed"));
 
         AnimationTimer gameloop = new AnimationTimer() {
 
@@ -60,9 +62,9 @@ public class WireWorld extends Application {
 
             @Override
             public void handle(long now) {
-                if (now - this.lastFrame < frameTime) {
+                if (now - this.lastFrame < 1000000000 / ((double) speed)) {
                     try {
-                        Thread.sleep((long) ((frameTime - (now - this.lastFrame)) / 1000000));
+                        Thread.sleep((long) ((1000000000 / ((double) speed) - (now - this.lastFrame)) / 1000000));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -137,18 +139,28 @@ public class WireWorld extends Application {
             }
         });
 
-        scene.setOnKeyTyped((KeyEvent event) -> {
-            switch (event.getCharacter()) {
-                case " ":
+        scene.setOnKeyPressed((KeyEvent event) -> {
+            switch (event.getCode()) {
+                case SPACE:
                     running = !running;
                     break;
-                case "\n":
-                case "\r":
+                case ENTER:
                     game.step();
                     display.display();
                     break;
-                case "\b":
+                case BACK_SPACE:
+                case DELETE:
                     game.clear();
+                    break;
+                case UP:
+                    if (speed < 60) {
+                        speed++;
+                    }
+                    break;
+                case DOWN:
+                    if (speed > 2) {
+                        speed--;
+                    }
                     break;
             }
         });
