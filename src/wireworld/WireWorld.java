@@ -1,5 +1,6 @@
 package wireworld;
 
+import java.io.File;
 import java.io.IOException;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -20,10 +21,16 @@ public class WireWorld extends Application {
     private boolean running = false;
     private int speed;
     private int[] mousePos = {-1, -1};
+    private static final String savesDirName = "saves/";
 
     @Override
     public void start(Stage primaryStage) {
         this.stage = primaryStage;
+        
+        File savesDir = new File(savesDirName);
+        if (!savesDir.exists()) {
+            savesDir.mkdir();
+        }
 
         // get settings
         final Settings settings;
@@ -182,9 +189,9 @@ public class WireWorld extends Application {
         String filename;
         String ext = ".wws";
         if (saveId == -1) {
-            filename = "current" + ext;
+            filename = savesDirName + "current" + ext;
         } else {
-            filename = "game-" + Integer.toString(saveId) + ext;
+            filename = savesDirName + "game-" + Integer.toString(saveId) + ext;
         }
 
         try {
