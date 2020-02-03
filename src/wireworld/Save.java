@@ -27,6 +27,7 @@ public class Save {
         writeProperty(gameFile, "cellSize", settings.get("cellSize"));
         writeProperty(gameFile, "padding", settings.get("padding"));
         writeProperty(gameFile, "speed", settings.get("speed"));
+        writeProperty(gameFile, "running", settings.get("running"));
         writeBoard(gameFile, "board", game);
         gameFile.close();
     }
