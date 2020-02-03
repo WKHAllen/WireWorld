@@ -21,6 +21,7 @@ public class WireWorld extends Application {
     private boolean running = false;
     private int speed;
     private int[] mousePos = {-1, -1};
+    private AnimationTimer gameloop;
     private static final String SAVES_DIR_NAME = "saves/";
     private static final String SAVE_CURRENT = "current";
     private static final String SAVE_EXT = ".wws";
@@ -50,7 +51,7 @@ public class WireWorld extends Application {
             this.stage.close();
             return;
         }
-        
+
         // load game
         Game loadedGame;
         try {
@@ -77,7 +78,7 @@ public class WireWorld extends Application {
         this.speed = Integer.parseInt(settings.get("speed"));
         this.running = Boolean.parseBoolean(settings.get("running"));
 
-        AnimationTimer gameloop = new AnimationTimer() {
+        this.gameloop = new AnimationTimer() {
 
             private long lastFrame = 0;
 
@@ -99,7 +100,7 @@ public class WireWorld extends Application {
             }
         };
 
-        gameloop.start();
+        this.gameloop.start();
 
         scene.setOnMousePressed((MouseEvent event) -> {
             mousePos = display.coordsToPos((int) event.getSceneX(), (int) event.getSceneY());
@@ -202,7 +203,35 @@ public class WireWorld extends Application {
                         }
                     }
                     break;
-                // TODO: detect manual save and load
+                case DIGIT0:
+                case DIGIT1:
+                case DIGIT2:
+                case DIGIT3:
+                case DIGIT4:
+                case DIGIT5:
+                case DIGIT6:
+                case DIGIT7:
+                case DIGIT8:
+                case DIGIT9:
+                case NUMPAD0:
+                case NUMPAD1:
+                case NUMPAD2:
+                case NUMPAD3:
+                case NUMPAD4:
+                case NUMPAD5:
+                case NUMPAD6:
+                case NUMPAD7:
+                case NUMPAD8:
+                case NUMPAD9:
+                    int saveId = Integer.parseInt(event.getText());
+                    if (event.isShiftDown()) {
+                        // save the game
+                        saveGame(game, settings, saveId);
+                    } else {
+                        // load a game
+                        loadGame(game, saveId);
+                    }
+                    break;
             }
         });
 
@@ -230,9 +259,22 @@ public class WireWorld extends Application {
     }
 
     public void loadGame(Game game, int saveId) {
-        this.stage.close();
-        // TODO: copy contents of 'saves/game-{saveId}.wws' to 'saves/current.wws'
-        launch(new String[]{});
+        String srcFilename = SAVES_DIR_NAME + "game-" + Integer.toString(saveId) + SAVE_EXT;
+        String dstFilename = SAVES_DIR_NAME + SAVE_CURRENT + SAVE_EXT;
+        // if the file does not exist, do nothing
+        File f = new File(srcFilename);
+        if (f.exists() && !f.isDirectory()) {
+            this.gameloop.stop();
+            this.stage.close();
+            // copy contents of 'saves/game-{saveId}.wws' to 'saves/current.wws'
+            try {
+                Save.copyFile(srcFilename, dstFilename);
+            } catch (IOException e) {
+                System.out.println("Failed to load game");
+                e.printStackTrace();
+            }
+            start(this.stage);
+        }
     }
 
     /**

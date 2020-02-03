@@ -109,4 +109,15 @@ public class Save {
         gameFile.write(COMMENT_CHAR + comment + "\n");
     }
 
+    public static void copyFile(String srcFilename, String dstFilename) throws IOException {
+        Scanner srcFile = new Scanner(new File(srcFilename));
+        FileWriter dstFile = new FileWriter(dstFilename);
+        while (srcFile.hasNextLine()) {
+            String line = srcFile.nextLine();
+            dstFile.write(line + "\n");
+        }
+        srcFile.close();
+        dstFile.close();
+    }
+
 }
