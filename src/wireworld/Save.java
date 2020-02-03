@@ -38,10 +38,13 @@ public class Save {
             String line = gameFile.nextLine();
             if (!line.startsWith(COMMENT_CHAR)) {
                 String[] prop = line.split(PROP_DELIM);
-                if ("board".equals(prop[0])) {
-                    board = prop[1];
-                } else {
-                    settings.set(prop[0], prop[1]);
+                switch (prop[0]) {
+                    case "board":
+                        board = prop[1];
+                        break;
+                    default:
+                        settings.set(prop[0], prop[1]);
+                        break;
                 }
             }
         }

@@ -43,6 +43,7 @@ public class WireWorld extends Application {
             settings.setDefault("cellSize", "20");
             settings.setDefault("padding", "1");
             settings.setDefault("speed", "20");
+            settings.setDefault("running", "true");
         } catch (IOException e) {
             System.out.println("Failed to read game properties");
             e.printStackTrace();
@@ -55,8 +56,6 @@ public class WireWorld extends Application {
         try {
             loadedGame = Save.load(SAVES_DIR_NAME + SAVE_CURRENT + SAVE_EXT, settings);
         } catch (IOException e) {
-            System.out.println("Failed to load last game");
-            e.printStackTrace();
             int width = Integer.parseInt(settings.get("width"));
             int height = Integer.parseInt(settings.get("height"));
             loadedGame = new Game(width, height);
@@ -75,8 +74,8 @@ public class WireWorld extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        this.running = true;
         this.speed = Integer.parseInt(settings.get("speed"));
+        this.running = Boolean.parseBoolean(settings.get("running"));
 
         AnimationTimer gameloop = new AnimationTimer() {
 
@@ -166,6 +165,12 @@ public class WireWorld extends Application {
             switch (event.getCode()) {
                 case SPACE:
                     running = !running;
+                    try {
+                        settings.set("running", Boolean.toString(running));
+                    } catch (IOException e) {
+                        System.out.println("Failed to save running state");
+                        e.printStackTrace();
+                    }
                     break;
                 case ENTER:
                     game.step();
@@ -178,11 +183,23 @@ public class WireWorld extends Application {
                 case UP:
                     if (speed < 60) {
                         speed++;
+                        try {
+                            settings.set("speed", Integer.toString(speed));
+                        } catch (IOException e) {
+                            System.out.println("Failed to save speed");
+                            e.printStackTrace();
+                        }
                     }
                     break;
                 case DOWN:
                     if (speed > 2) {
                         speed--;
+                        try {
+                            settings.set("speed", Integer.toString(speed));
+                        } catch (IOException e) {
+                            System.out.println("Failed to save speed");
+                            e.printStackTrace();
+                        }
                     }
                     break;
                 // TODO: detect manual save and load
