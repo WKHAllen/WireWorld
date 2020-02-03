@@ -1,8 +1,9 @@
 package wireworld;
 
-import java.io.FileReader;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  *
@@ -12,11 +13,11 @@ public class Save {
 
     private static final String COMMENT_CHAR = "# ";
     private static final String PROP_DELIM = ": ";
-    private static final String BOARD_NEWLINE = "|";
-    private static final String CELL_EMPTY = "0";
-    private static final String CELL_EHEAD = "1";
-    private static final String CELL_ETAIL = "2";
-    private static final String CELL_CONDUCTOR = "3";
+    private static final String BOARD_NEWLINE = ",";
+    private static final char CELL_EMPTY = '0';
+    private static final char CELL_EHEAD = '1';
+    private static final char CELL_ETAIL = '2';
+    private static final char CELL_CONDUCTOR = '3';
 
     public static void save(String filename, Game game, Settings settings) throws IOException {
         FileWriter gameFile = new FileWriter(filename);
@@ -30,8 +31,44 @@ public class Save {
         gameFile.close();
     }
 
-    public static void load(String filename) {
-        // TODO: implement this
+    public static Game load(String filename, Settings settings) throws IOException {
+        Scanner gameFile = new Scanner(new File(filename));
+        String board = "";
+        while (gameFile.hasNextLine()) {
+            String line = gameFile.nextLine();
+            if (!line.startsWith(COMMENT_CHAR)) {
+                String[] prop = line.split(PROP_DELIM);
+                if ("board".equals(prop[0])) {
+                    board = prop[1];
+                } else {
+                    settings.set(prop[0], prop[1]);
+                }
+            }
+        }
+        gameFile.close();
+        int width = Integer.parseInt(settings.get("width"));
+        int height = Integer.parseInt(settings.get("height"));
+        Game game = new Game(width, height);
+        String[] boardSplit = board.split(BOARD_NEWLINE);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                switch (boardSplit[i].charAt(j)) {
+                    case CELL_EMPTY:
+                        game.set(j, i, GameCell.EMPTY);
+                        break;
+                    case CELL_EHEAD:
+                        game.set(j, i, GameCell.EHEAD);
+                        break;
+                    case CELL_ETAIL:
+                        game.set(j, i, GameCell.ETAIL);
+                        break;
+                    case CELL_CONDUCTOR:
+                        game.set(j, i, GameCell.CONDUCTOR);
+                        break;
+                }
+            }
+        }
+        return game;
     }
 
     private static void writeProperty(FileWriter gameFile, String propName, String propValue) throws IOException {
@@ -57,7 +94,9 @@ public class Save {
                         break;
                 }
             }
-            gameFile.write(BOARD_NEWLINE);
+            if (i < game.getHeight() - 1) {
+                gameFile.write(BOARD_NEWLINE);
+            }
         }
         gameFile.write("\n");
     }

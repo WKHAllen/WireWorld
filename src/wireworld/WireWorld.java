@@ -21,13 +21,15 @@ public class WireWorld extends Application {
     private boolean running = false;
     private int speed;
     private int[] mousePos = {-1, -1};
-    private static final String savesDirName = "saves/";
+    private static final String SAVES_DIR_NAME = "saves/";
+    private static final String SAVE_CURRENT = "current";
+    private static final String SAVE_EXT = ".wws";
 
     @Override
     public void start(Stage primaryStage) {
         this.stage = primaryStage;
-        
-        File savesDir = new File(savesDirName);
+
+        File savesDir = new File(SAVES_DIR_NAME);
         if (!savesDir.exists()) {
             savesDir.mkdir();
         }
@@ -47,11 +49,19 @@ public class WireWorld extends Application {
             this.stage.close();
             return;
         }
-
-        // initialize the game
-        int width = Integer.parseInt(settings.get("width"));
-        int height = Integer.parseInt(settings.get("height"));
-        final Game game = new Game(width, height);
+        
+        // load game
+        Game loadedGame;
+        try {
+            loadedGame = Save.load(SAVES_DIR_NAME + SAVE_CURRENT + SAVE_EXT, settings);
+        } catch (IOException e) {
+            System.out.println("Failed to load last game");
+            e.printStackTrace();
+            int width = Integer.parseInt(settings.get("width"));
+            int height = Integer.parseInt(settings.get("height"));
+            loadedGame = new Game(width, height);
+        }
+        final Game game = loadedGame;
 
         // initialize the display
         int cellSize = Integer.parseInt(settings.get("cellSize"));
@@ -175,6 +185,7 @@ public class WireWorld extends Application {
                         speed--;
                     }
                     break;
+                // TODO: detect manual save and load
             }
         });
 
@@ -187,11 +198,10 @@ public class WireWorld extends Application {
 
     public void saveGame(Game game, Settings settings, int saveId) {
         String filename;
-        String ext = ".wws";
         if (saveId == -1) {
-            filename = savesDirName + "current" + ext;
+            filename = SAVES_DIR_NAME + SAVE_CURRENT + SAVE_EXT;
         } else {
-            filename = savesDirName + "game-" + Integer.toString(saveId) + ext;
+            filename = SAVES_DIR_NAME + "game-" + Integer.toString(saveId) + SAVE_EXT;
         }
 
         try {
@@ -202,9 +212,9 @@ public class WireWorld extends Application {
         }
     }
 
-    public void loadGame(Game game) {
-        // TODO: implement this
+    public void loadGame(Game game, int saveId) {
         this.stage.close();
+        // TODO: copy contents of 'saves/game-{saveId}.wws' to 'saves/current.wws'
         launch(new String[]{});
     }
 
